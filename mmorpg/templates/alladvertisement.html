@@ -1,0 +1,61 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+{% load cache %}
+{% block content %}
+  <h1>Объявления</h1>
+
+  <form method="get" action="">
+    <label for="category-select">Категория:</label>
+    <select id="category-select" name="category" onchange="this.form.submit()">
+      <option value="" {% if not category %}selected{% endif %}>Все категории</option>
+      {% for cat in categories %}
+        <option value="{{ cat.id }}" {% if category == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+      {% endfor %}
+    </select>
+
+    <label for="sort-select">Сортировать по:</label>
+    <select id="sort-select" name="sort" onchange="this.form.submit()">
+      <option value="-modified" {% if sort == '-modified' %}selected{% endif %}>Дате изменения (по убыванию)</option>
+      <option value="modified" {% if sort == 'modified' %}selected{% endif %}>Дате изменения (по возрастанию)</option>
+      <option value="-responses" {% if sort == '-responses' %}selected{% endif %}>Откликам (по убыванию)</option>
+      <option value="responses" {% if sort == 'responses' %}selected{% endif %}>Откликам (по возрастанию)</option>
+    </select>
+  </form>
+
+  <hr>
+
+  {% if Advertisements %}
+    <ul>
+      {% for advertisement in advertisements %}
+        <li>
+          <h3>{{ advertisement.title }}</h3>
+          <p>{{ advertisement.content }}</p><p><strong>Категория:</strong> {{ advertisement.category }}</p>
+          <p><strong>Категория:</strong> {{ advertisement.category }}</p>
+          <p><strong>Дата создания:</strong> {{ advertisement.created_at }}</p>
+          <p><strong>Автор:</strong> {{ advertisement.author }}</p>
+          <p><strong>Отклики:</strong> {{ advertisement.responses }}</p>
+          <p><strong>Заголовок:</strong> {{ advertisement.title }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <div class="pagination">
+      <span class="step-links">
+          {% if posts.has_previous %}
+              <a href="?page=1{% if category %}&category={{ category }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">&laquo; первая</a>
+              <a href="?page={{ posts.previous_page_number }}{% if category %}&category={{ category }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">предыдущая</a>
+          {% endif %}
+
+          <span class="current-page">
+              Страница {{ posts.number }} из {{ posts.paginator.num_pages }}.
+          </span>
+
+          {% if posts.has_next %}
+              <a href="?page={{ posts.next_page_number }}{% if category %}&category={{ category }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">следующая</a>
+              <a href="?page={{ posts.paginator.num_pages }}{% if category %}&category={{ category }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">последняя &raquo;</a>
+          {% endif %}
+
+    {% endcache %}
+
+{% endblock content %}

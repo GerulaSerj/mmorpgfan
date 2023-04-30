@@ -1,0 +1,14 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+{% block title %}
+Advertisement
+{% endblock title %}
+
+
+{% block content %}
+<h1>{{ Advertisement.title|censor }}</h1>
+<h2>{{ Advertisement.text|censor }}</h2>
+<h3>{{ Advertisement.created_at|date:'M d Y' }}</h3>
+{% endblock content %}
