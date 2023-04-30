@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login
-from .forms import RegistrationForm
+from .forms import RegistrationForm, AdvertisementCreateForm
+from django import forms
 from .models import CustomUser, Response, Advertisement, Subscription, Category
 from django.core.mail import send_mail
 from django.conf import settings
@@ -81,7 +82,21 @@ class AdvertisementCreate(LoginRequiredMixin, CreateView):
     form_class = AdvertisementCreateWizard
     model = Advertisement
     template_name = 'advertisement.html'
-
+@login_required
+def advertisement_create(request):
+    if request.method == 'POST':
+        form = AdvertisementCreateForm(request.POST, request.FILES)
+        if form.is_valid():
+            advertisement = form.save(commit=False)
+            advertisement.author = request.user
+            if request.FILES.get('image'):
+                advertisement.image = request.FILES['image']
+            advertisement.save()
+            messages.success(request, 'Advertisement created successfully!')
+            return redirect('advertisement_list')
+    else:
+        form = AdvertisementForm()
+    return render(request, 'mmorpg/advertisement_create.html', {'form': form})
 class AdvertisementListView(ListView):
     model = Advertisement
     ordering = 'created_at'
@@ -138,6 +153,20 @@ class AdvertisementUpdate(UpdateView):
     form_class = AdvertisementCreateWizard
     model = Advertisement
     template_name = 'Advertisement_edit.html'
+def advertisement_edit(request, pk):
+    advertisement = get_object_or_404(Advertisement, pk=pk, author=request.user)
+    if request.method == 'POST':
+        form = AdvertisementForm(request.POST, request.FILES, instance=advertisement)
+        if form.is_valid():
+            advertisement = form.save(commit=False)
+            if request.FILES.get('image'):
+                advertisement.image = request.FILES['image']
+            advertisement.save()
+            messages.success(request, 'Advertisement updated successfully!')
+            return redirect('advertisement_list')
+    else:
+        form = AdvertisementForm(instance=advertisement)
+    return render(request, 'mmorpg/advertisement_edit.html', {'form': form, 'advertisement': advertisement})
 
 class AdvertisementDelete(DeleteView):
     model = Advertisement

@@ -8,4 +8,7 @@
     {{ form.as_p }}
     <input type="submit" value="Save" />
 </form>
+{% if advertisement.image %}
+    <img src="{{ advertisement.image.url }}" alt="{{ advertisement.title }}">
+{% endif %}
 {% endblock content %}

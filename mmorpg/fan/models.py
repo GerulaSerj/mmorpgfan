@@ -61,6 +61,7 @@ class Advertisement (models.Model): #определяет объявления, 
     category = models.CharField(choices=CATEGORIES, max_length=20)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='advertisements')
     created_at = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField(upload_to='advertisement_images/', blank=True, null=True)
 
 class Response(models.Model): #определяет ответы на объявления
     advertisement = models.ForeignKey(Advertisement, on_delete=models.CASCADE, related_name='responses')

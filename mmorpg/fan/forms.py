@@ -4,8 +4,6 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column
 from formtools.wizard.views import SessionWizardView
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import Advertisement, Response
-from .forms import ResponseForm
 
 
 class RegistrationForm(forms.ModelForm):
@@ -29,6 +27,9 @@ class AdvertisementCreateForm(forms.ModelForm):
     class Meta:
         model = Advertisement
         fields = ['title', 'text', 'category']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 5}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
