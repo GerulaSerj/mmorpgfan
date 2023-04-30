@@ -173,3 +173,7 @@ def subscriptions(request):
         'subscriptions.html',
         {'categories': categories_with_subscriptions},
     )
+
+@cache_page(60 * 15)
+def my_view(request):
+    ...
