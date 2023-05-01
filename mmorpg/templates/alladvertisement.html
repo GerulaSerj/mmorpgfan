@@ -2,7 +2,6 @@
 
 {% block content %}
 {% load cache %}
-{% block content %}
   <h1>Объявления</h1>
 
   <form method="get" action="">
@@ -56,6 +55,6 @@
               <a href="?page={{ posts.paginator.num_pages }}{% if category %}&category={{ category }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">последняя &raquo;</a>
           {% endif %}
 
-    {% endcache %}
+    {% endif %}
 
 {% endblock content %}
