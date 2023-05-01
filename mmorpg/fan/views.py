@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login
-from .forms import RegistrationForm, AdvertisementCreateForm
+from .forms import RegistrationForm
 from django import forms
 from .models import CustomUser, Response, Advertisement, Subscription, Category
 from django.core.mail import send_mail
@@ -21,6 +21,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import (
    ListView, DetailView, CreateView, UpdateView, DeleteView
 )
+from .filters import AdvertisementFilter
 class CustomLoginView(LoginView):
     template_name = 'login.html' # указываем имя шаблона для страницы логина
     redirect_authenticated_user = True # указываем, что уже аутентифицированный пользователь будет перенаправлен на страницу, указанную в LOGIN_REDIRECT_URL в settings.py
@@ -34,7 +35,6 @@ def registration_view(request):
         if form.is_valid():
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
-
             user = CustomUser.objects.create_user(email=email, password=password)
             user.is_active = False
             user.save()
@@ -82,21 +82,7 @@ class AdvertisementCreate(LoginRequiredMixin, CreateView):
     form_class = AdvertisementCreateWizard
     model = Advertisement
     template_name = 'advertisement.html'
-@login_required
-def advertisement_create(request):
-    if request.method == 'POST':
-        form = AdvertisementCreateForm(request.POST, request.FILES)
-        if form.is_valid():
-            advertisement = form.save(commit=False)
-            advertisement.author = request.user
-            if request.FILES.get('image'):
-                advertisement.image = request.FILES['image']
-            advertisement.save()
-            messages.success(request, 'Advertisement created successfully!')
-            return redirect('advertisement_list')
-    else:
-        form = AdvertisementForm()
-    return render(request, 'mmorpg/advertisement_create.html', {'form': form})
+
 class AdvertisementListView(ListView):
     model = Advertisement
     ordering = 'created_at'
@@ -106,7 +92,7 @@ class AdvertisementListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        self.filterset = ProductFilter(self.request.GET, queryset)
+        self.filterset = AdvertisementFilter(self.request.GET, queryset)
         return self.filterset.qs
 
     def get_context_data(self, **kwargs):
@@ -153,20 +139,6 @@ class AdvertisementUpdate(UpdateView):
     form_class = AdvertisementCreateWizard
     model = Advertisement
     template_name = 'Advertisement_edit.html'
-def advertisement_edit(request, pk):
-    advertisement = get_object_or_404(Advertisement, pk=pk, author=request.user)
-    if request.method == 'POST':
-        form = AdvertisementForm(request.POST, request.FILES, instance=advertisement)
-        if form.is_valid():
-            advertisement = form.save(commit=False)
-            if request.FILES.get('image'):
-                advertisement.image = request.FILES['image']
-            advertisement.save()
-            messages.success(request, 'Advertisement updated successfully!')
-            return redirect('advertisement_list')
-    else:
-        form = AdvertisementForm(instance=advertisement)
-    return render(request, 'mmorpg/advertisement_edit.html', {'form': form, 'advertisement': advertisement})
 
 class AdvertisementDelete(DeleteView):
     model = Advertisement
@@ -202,7 +174,3 @@ def subscriptions(request):
         'subscriptions.html',
         {'categories': categories_with_subscriptions},
     )
-
-@cache_page(60 * 15)
-def my_view(request):
-    ...

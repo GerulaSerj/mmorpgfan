@@ -6,9 +6,7 @@
 Advertisement
 {% endblock title %}
 
-{% if advertisement.image %}
-    <img src="{{ advertisement.image.url }}" alt="{{ advertisement.title }}">
-{% endif %}
+
 {% block content %}
 <h1>{{ Advertisement.title|censor }}</h1>
 <h2>{{ Advertisement.text|censor }}</h2>

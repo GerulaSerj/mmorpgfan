@@ -1,6 +1,6 @@
 from django_filters import FilterSet, CharFilter, DateTimeFilter, ModelMultipleChoiceFilter
 from django.forms import DateTimeInput
-from .models import Advertisement, Category
+from .models import Category
 
 
 class AdvertisementFilter(FilterSet):

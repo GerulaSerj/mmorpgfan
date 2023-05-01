@@ -11,5 +11,5 @@ urlpatterns = [
     path('', AdvertisementListView.as_view(), name='home'),
     path('subscriptions/', subscriptions, name='subscriptions'),
     path('articles/<int:pk>/update/', AdvertisementUpdate.as_view(), name='advertisement_edit'),
-    path('articles/<int:pk>/delete/', AdvertisementDelete.as_view(), name='advertisement_delete'),
+    path('articles/<int:pk>/delete/', AdvertisementDelete.as_view(), name='advertisement_delete')
 ]
